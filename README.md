@@ -1,3 +1,3 @@
 procsland
 ===========
-A cellular automata based procedural generator of islands as hex maps.
+A cellular automata based procedural hex map island generator.
