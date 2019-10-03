@@ -1,10 +1,10 @@
 #lang scribble/manual
-@require[@for-label[racket-game
+@require[@for-label[procsland
                     racket/base]]
 
-@title{racket-game}
+@title{procsland}
 @author{lkh}
 
-@defmodule[racket-game]
+@defmodule[procsland]
 
-Package Description Here
+A cellular automata based procedural hex map island generator.
