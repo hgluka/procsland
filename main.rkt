@@ -35,8 +35,8 @@
                             "size of the map in (hex) tiles"
                             (map-size (string->number MAP-SIZE))]
       [("-l" "--land-mass") LAND-MASS
-                            "size of the map in (hex) tiles"
-                            (map-size (string->number LAND-MASS))]
+                            "probability for land tiles to appear"
+                            (land-mass (string->number LAND-MASS))]
       [("-i" "--iterations") ITERATIONS 
                              "number of iterations of the cellular automata to perform"
                              (iterations (string->number ITERATIONS))]

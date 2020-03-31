@@ -11,7 +11,7 @@ main.rkt [ <option> ... ]
   -W <SCREEN-WIDTH>, --screen-width <SCREEN-WIDTH> : width of the screen in pixels
   -H <SCREEN-HEIGHT>, --screen-height <SCREEN-HEIGHT> : height of the screen in pixels
   -s <MAP-SIZE>, --map-size <MAP-SIZE> : size of the map in (hex) tiles
-  -l <LAND-MASS>, --land-mass <LAND-MASS> : size of the map in (hex) tiles
+  -l <LAND-MASS>, --land-mass <LAND-MASS> : probability for land tiles to appear
   -i <ITERATIONS>, --iterations <ITERATIONS> : number of iterations of the cellular automata to perform
   --help, -h : Show this help
   -- : Do not treat any remaining argument as a switch (at this level)
