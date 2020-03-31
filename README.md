@@ -3,7 +3,7 @@ procsland
 A cellular automata based procedural hex map island generator.
 
 ## Usage
-
+```
 main.rkt [ <option> ... ]
   procsland is an hex map island generator
   based on cellular automata.
@@ -17,7 +17,7 @@ main.rkt [ <option> ... ]
   -- : Do not treat any remaining argument as a switch (at this level)
  Multiple single-letter switches can be combined after one `-'; for
   example: `-h-' is the same as `-h --'
-
+```
 ## Screenshot
 
 ![screenshot of procsland in action](images/screenshot.png)
