@@ -12,6 +12,10 @@
   (read-bitmap "images/hex_grass_large.png" 'png/alpha))
 (define water-bitmap
   (read-bitmap "images/hex_water_large.png" 'png/alpha))
+(define mountain-bitmap
+  (read-bitmap "images/hex_mountain_large.png" 'png/alpha))
+(define beach-bitmap
+  (read-bitmap "images/hex_beach_large.png" 'png/alpha))
 
 (struct point ([x : Integer] [y : Integer]))
 
@@ -36,7 +40,13 @@
      (λ: ([js : (Vectorof Index)])
        (let ([s : Symbol (array-ref tile-map js)]
              [p : point (tile-pos js)])
-         (send dc draw-bitmap (if (equal? s 'land) land-bitmap water-bitmap) (point-x p) (point-y p))))
+         (cond
+           [(equal? s 'land) (send dc draw-bitmap land-bitmap (point-x p) (point-y p))]
+           [(equal? s 'water) (send dc draw-bitmap water-bitmap (point-x p) (point-y p))]
+           [(equal? s 'beach) (send dc draw-bitmap beach-bitmap (point-x p) (point-y p))]
+           [(equal? s 'mountain) (begin
+                                   (send dc draw-bitmap land-bitmap (point-x p) (point-y p))
+                                   (send dc draw-bitmap mountain-bitmap (point-x p) (- (point-y p) 10)))])))
      (indexes-array (array-shape tile-map)))
     (void)))
 
@@ -46,6 +56,8 @@
                 [screen-height : Exact-Nonnegative-Integer]
                 [map-size : Integer]
                 [land-mass : Integer]
+                [mountain-mass : Integer]
+                [beach-mass : Integer]
                 [iterations : Integer])
     (: frame (Instance Frame%))
     (define frame
@@ -53,7 +65,7 @@
            [label "procsland"]
            [style '(no-resize-border)]))
     (: tm (Array Symbol))
-    (define tm (generate-map land-mass map-size iterations))
+    (define tm (generate-map map-size iterations land-mass mountain-mass beach-mass))
     (: canvas (Instance Canvas%))
     (define canvas
       (new canvas%

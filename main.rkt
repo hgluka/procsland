@@ -14,8 +14,10 @@
   ; command line args
   (define screen-width (make-parameter 1600))
   (define screen-height (make-parameter 900))
-  (define map-size (make-parameter 45))
+  (define map-size (make-parameter 40))
   (define land-mass (make-parameter 53))
+  (define mountain-mass (make-parameter 35))
+  (define beach-mass (make-parameter 80))
   (define iterations (make-parameter 10))
 
   (define parser
@@ -37,7 +39,13 @@
       [("-l" "--land-mass") LAND-MASS
                             "probability for land tiles to appear"
                             (land-mass (string->number LAND-MASS))]
-      [("-i" "--iterations") ITERATIONS 
+      [("-m" "--mountain-mass") MOUNTAIN-MASS
+                            "probability for mountain tiles to appear"
+                            (mountain-mass (string->number MOUNTAIN-MASS))]
+      [("-m" "--beach-mass") BEACH-MASS
+                            "probability for beach tiles to appear"
+                            (beach-mass (string->number BEACH-MASS))]
+      [("-i" "--iterations") ITERATIONS
                              "number of iterations of the cellular automata to perform"
                              (iterations (string->number ITERATIONS))]
 
@@ -48,5 +56,7 @@
        [screen-height (screen-height)]
        [map-size (map-size)]
        [land-mass (land-mass)]
+       [mountain-mass (mountain-mass)]
+       [beach-mass (beach-mass)]
        [iterations (iterations)])
   )
