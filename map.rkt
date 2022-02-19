@@ -3,9 +3,9 @@
 
 (provide generate-map)
 
-(: tile-map (-> Integer (Array Symbol)))
-(define (tile-map n)
-  (make-array (vector n n) 'empty))
+(: tile-map (-> Integer Integer (Array Symbol)))
+(define (tile-map m n)
+  (make-array (vector m n) 'empty))
 
 (: init-land-and-water (-> (Array Symbol) Integer (Array Symbol)))
 (define (init-land-and-water tile-map land-mass)
@@ -24,7 +24,18 @@
           (if (< (random 100) mountain-mass)
             'mountain
             'land)
-          'water))
+          x))
+    tile-map))
+
+(: init-forests (-> (Array Symbol) Integer (Array Symbol)))
+(define (init-forests tile-map forest-mass)
+  (array-map
+    (λ: ([x : Symbol])
+        (if (equal? x 'land)
+          (if (< (random 100) forest-mass)
+            'forest
+            'land)
+          x))
     tile-map))
 
 (: init-beaches (-> (Array Symbol) Integer (Array Symbol)))
@@ -45,17 +56,18 @@
   (array-count
    (λ: ([s : Symbol])
      (equal? s tile))
-   (let ([size : Integer (- (vector-ref (array-shape tile-map) 1) 1)])
+   (let ([h : Integer (- (vector-ref (array-shape tile-map) 1) 1)]
+         [w : Integer (- (vector-ref (array-shape tile-map) 0) 1)])
      (array-indexes-ref
       tile-map
-      (array #[(vector (min (+ x 1) size) y)
-               (vector x (min (+ y 1) size))
+      (array #[(vector (min (+ x 1) w) y)
+               (vector x (min (+ y 1) h))
                (vector (max (- x 1) 0) y)
                (vector x (max (- y 1) 0))
-               (vector (min (+ x 1) size) (min (+ y 1) size))
+               (vector (min (+ x 1) w) (min (+ y 1) h))
                (vector (max (- x 1) 0) (max (- y 1) 0))
-               (vector (max (- x 1) 0) (min (+ y 1) size))
-               (vector (min (+ x 1) size) (max (- y 1) 0))])))))
+               (vector (max (- x 1) 0) (min (+ y 1) h))
+               (vector (min (+ x 1) w) (max (- y 1) 0))])))))
 
 (: land-step (-> (Array Symbol) (Array Symbol)))
 (define (land-step tile-map)
@@ -87,6 +99,19 @@
          [else s])))
    (indexes-array (array-shape tile-map))))
 
+(: forest-step (-> (Array Symbol) (Array Symbol)))
+(define (forest-step tile-map)
+  (array-map
+   (λ: ([js : (Vectorof Index)])
+     (let ([s : Symbol (array-ref tile-map js)])
+       (cond
+         [(and (equal? s 'forest)
+               (< (count-tiles tile-map 'forest (vector-ref js 0) (vector-ref js 1)) 2))
+          'land]
+         [(equal? s 'land) (if (> (count-tiles tile-map 'forest (vector-ref js 0) (vector-ref js 1)) 4) 'forest 'land)]
+         [else s])))
+   (indexes-array (array-shape tile-map))))
+
 (: generate-land (-> (Array Symbol) Integer Integer (Array Symbol)))
 (define (generate-land tile-map land-mass iter)
   (let ([tm : (Array Symbol) (init-land-and-water tile-map land-mass)])
@@ -101,6 +126,13 @@
       (set! tm (mountain-step tm)))
     tm))
 
-(: generate-map (-> Integer Integer Integer Integer Integer (Array Symbol)))
-(define (generate-map size iter land-mass mountain-mass beach-mass)
-  (init-beaches (generate-mountains (generate-land (tile-map size) land-mass iter) mountain-mass iter) beach-mass))
+(: generate-forests (-> (Array Symbol) Integer Integer (Array Symbol)))
+(define (generate-forests tile-map forest-mass iter)
+  (let ([tm : (Array Symbol) (init-forests tile-map forest-mass)])
+    (for ([i iter])
+      (set! tm (forest-step tm)))
+    tm))
+
+(: generate-map (-> Integer Integer Integer Integer Integer Integer Integer (Array Symbol)))
+(define (generate-map map-height map-width iter land-mass mountain-mass forest-mass beach-mass)
+  (init-beaches (generate-forests (generate-mountains (generate-land (tile-map map-height map-width) land-mass iter) mountain-mass iter) forest-mass iter) beach-mass))

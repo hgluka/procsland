@@ -14,6 +14,8 @@
   (read-bitmap "images/hex_water_large.png" 'png/alpha))
 (define mountain-bitmap
   (read-bitmap "images/hex_mountain_large.png" 'png/alpha))
+(define forest-bitmap
+  (read-bitmap "images/hex_forest_large.png" 'png/alpha))
 (define beach-bitmap
   (read-bitmap "images/hex_beach_large.png" 'png/alpha))
 
@@ -46,7 +48,10 @@
            [(equal? s 'beach) (send dc draw-bitmap beach-bitmap (point-x p) (point-y p))]
            [(equal? s 'mountain) (begin
                                    (send dc draw-bitmap land-bitmap (point-x p) (point-y p))
-                                   (send dc draw-bitmap mountain-bitmap (point-x p) (- (point-y p) 10)))])))
+                                   (send dc draw-bitmap mountain-bitmap (point-x p) (- (point-y p) 10)))]
+           [(equal? s 'forest) (begin
+                                   (send dc draw-bitmap land-bitmap (point-x p) (point-y p))
+                                   (send dc draw-bitmap forest-bitmap (point-x p) (- (point-y p) 5)))])))
      (indexes-array (array-shape tile-map)))
     (void)))
 
@@ -54,9 +59,11 @@
   (class object%
     (init-field [screen-width : Exact-Nonnegative-Integer]
                 [screen-height : Exact-Nonnegative-Integer]
-                [map-size : Integer]
+                [map-height : Integer]
+                [map-width : Integer]
                 [land-mass : Integer]
                 [mountain-mass : Integer]
+                [forest-mass : Integer]
                 [beach-mass : Integer]
                 [iterations : Integer])
     (: frame (Instance Frame%))
@@ -65,7 +72,7 @@
            [label "procsland"]
            [style '(no-resize-border)]))
     (: tm (Array Symbol))
-    (define tm (generate-map map-size iterations land-mass mountain-mass beach-mass))
+    (define tm (generate-map map-height map-width iterations land-mass mountain-mass forest-mass beach-mass))
     (: canvas (Instance Canvas%))
     (define canvas
       (new canvas%
