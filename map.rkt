@@ -135,4 +135,4 @@
 
 (: generate-map (-> Integer Integer Integer Integer Integer Integer Integer (Array Symbol)))
 (define (generate-map map-height map-width iter land-mass mountain-mass forest-mass beach-mass)
-  (init-beaches (generate-forests (generate-mountains (generate-land (tile-map map-height map-width) land-mass iter) mountain-mass iter) forest-mass iter) beach-mass))
+  (generate-forests (generate-mountains (init-beaches (generate-land (tile-map map-height map-width) land-mass iter) beach-mass) mountain-mass iter) forest-mass iter))

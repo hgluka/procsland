@@ -19,7 +19,7 @@
   (define land-mass (make-parameter 53))
   (define mountain-mass (make-parameter 35))
   (define forest-mass (make-parameter 45))
-  (define beach-mass (make-parameter 80))
+  (define beach-mass (make-parameter 100))
   (define iterations (make-parameter 10))
 
   (define parser
