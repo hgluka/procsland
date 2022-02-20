@@ -4,7 +4,7 @@ A cellular automata based procedural hex island map generator.
 
 ## Usage
 ```
-usage: main.rkt [ <option> ... ]
+usage: procsland.rkt [ <option> ... ]
   procsland is an hex map island generator
   based on cellular automata.
 
