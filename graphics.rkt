@@ -38,15 +38,21 @@
            [(equal? s 'land) (begin
                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height))]
            [(equal? s 'water) (begin
-                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* (+ 0 1) hex-height) hex-width hex-height))]
+                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 1 hex-height) hex-width hex-height))]
            [(equal? s 'beach) (begin
-                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* (+ 1 2) hex-height) hex-width hex-height))]
+                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 3 hex-height) hex-width hex-height))]
            [(equal? s 'mountain) (begin
                                    (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
                                    (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 0 (random 2)) hex-width) (* (+ 1 (random 2)) hex-height) hex-width hex-height))]
            [(equal? s 'forest) (begin
                                  (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
-                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 1 (random 2)) hex-width) (* 0 hex-height) hex-width hex-height))])))
+                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 1 (random 2)) hex-width) (* 0 hex-height) hex-width hex-height))]
+           [(equal? s 'farm) (begin
+                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
+                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 2 hex-width) (* 3 hex-height) hex-width hex-height))]
+           [(equal? s 'city) (begin
+                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
+                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 0 (random 2)) hex-width) (* 3 hex-height) hex-width hex-height))])))
      (indexes-array (array-shape tile-map)))
     (void)))
 
@@ -60,6 +66,7 @@
                 [mountain-mass : Integer]
                 [forest-mass : Integer]
                 [beach-mass : Integer]
+                [city-mass : Integer]
                 [iterations : Integer])
     (: frame (Instance Frame%))
     (define frame
@@ -67,7 +74,7 @@
            [label "procsland"]
            [style '(no-resize-border)]))
     (: tm (Array Symbol))
-    (define tm (generate-map map-height map-width iterations land-mass mountain-mass forest-mass beach-mass))
+    (define tm (generate-map map-height map-width iterations land-mass mountain-mass forest-mass beach-mass city-mass))
     (: canvas (Instance Canvas%))
     (define canvas
       (new canvas%

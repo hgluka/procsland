@@ -20,6 +20,7 @@
   (define mountain-mass (make-parameter 35))
   (define forest-mass (make-parameter 45))
   (define beach-mass (make-parameter 100))
+  (define city-mass (make-parameter 3))
   (define iterations (make-parameter 10))
 
   (define parser
@@ -53,6 +54,9 @@
       [("-b" "--beach-mass") BEACH-MASS
                             "probability for beach tiles to appear"
                             (beach-mass (string->number BEACH-MASS))]
+      [("-c" "--city-mass") CITY-MASS
+                            "probability for city tiles to appear"
+                            (city-mass (string->number CITY-MASS))]
       [("-i" "--iterations") ITERATIONS
                              "number of iterations of the cellular automata to perform"
                              (iterations (string->number ITERATIONS))]
@@ -68,5 +72,6 @@
        [mountain-mass (mountain-mass)]
        [forest-mass (forest-mass)]
        [beach-mass (beach-mass)]
+       [city-mass (city-mass)]
        [iterations (iterations)])
   )

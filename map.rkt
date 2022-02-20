@@ -51,6 +51,17 @@
          [else s])))
    (indexes-array (array-shape tile-map))))
 
+(: init-cities (-> (Array Symbol) Integer (Array Symbol)))
+(define (init-cities tile-map city-mass)
+  (array-map
+    (λ: ([x : Symbol])
+        (if (equal? x 'land)
+          (if (< (random 100) city-mass)
+            'city
+            'land)
+          x))
+    tile-map))
+
 (: count-tiles (-> (Array Symbol) Symbol Integer Integer Integer))
 (define (count-tiles tile-map tile x y)
   (array-count
@@ -112,6 +123,23 @@
          [else s])))
    (indexes-array (array-shape tile-map))))
 
+(: farm-step (-> (Array Symbol) (Array Symbol)))
+(define (farm-step tile-map)
+  (array-map
+   (λ: ([js : (Vectorof Index)])
+     (let ([s : Symbol (array-ref tile-map js)])
+       (cond
+         [(and (equal? s 'farm)
+               (< (count-tiles tile-map 'city (vector-ref js 0) (vector-ref js 1)) 1)
+               (< (count-tiles tile-map 'farm (vector-ref js 0) (vector-ref js 1)) 3))
+          'land]
+         [(and (equal? s 'land)
+               (> (count-tiles tile-map 'city (vector-ref js 0) (vector-ref js 1)) 0))
+          'farm]
+         [(equal? s 'land) (if (> (count-tiles tile-map 'farm (vector-ref js 0) (vector-ref js 1)) 6) 'farm 'land)]
+         [else s])))
+   (indexes-array (array-shape tile-map))))
+
 (: generate-land (-> (Array Symbol) Integer Integer (Array Symbol)))
 (define (generate-land tile-map land-mass iter)
   (let ([tm : (Array Symbol) (init-land-and-water tile-map land-mass)])
@@ -133,6 +161,13 @@
       (set! tm (forest-step tm)))
     tm))
 
-(: generate-map (-> Integer Integer Integer Integer Integer Integer Integer (Array Symbol)))
-(define (generate-map map-height map-width iter land-mass mountain-mass forest-mass beach-mass)
-  (generate-forests (generate-mountains (init-beaches (generate-land (tile-map map-height map-width) land-mass iter) beach-mass) mountain-mass iter) forest-mass iter))
+(: generate-cities (-> (Array Symbol) Integer Integer (Array Symbol)))
+(define (generate-cities tile-map city-mass iter)
+  (let ([tm : (Array Symbol) (init-cities tile-map city-mass)])
+    (for ([i iter])
+      (set! tm (farm-step tm)))
+    tm))
+
+(: generate-map (-> Integer Integer Integer Integer Integer Integer Integer Integer (Array Symbol)))
+(define (generate-map map-height map-width iter land-mass mountain-mass forest-mass beach-mass city-mass)
+  (generate-cities (generate-forests (generate-mountains (init-beaches (generate-land (tile-map map-height map-width) land-mass iter) beach-mass) mountain-mass iter) forest-mass iter) city-mass iter))
