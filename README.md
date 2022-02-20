@@ -1,6 +1,6 @@
 procsland
 ===========
-A cellular automata based procedural hex map island generator.
+A cellular automata based procedural hex island map generator.
 
 ## Usage
 ```
@@ -21,3 +21,5 @@ main.rkt [ <option> ... ]
 ## Screenshot
 
 ![screenshot of procsland in action](images/screenshot.png)
+
+Tileset is a combination (and scaling) of [Basic Hex Tile Set - 16x16 by Dr. Jamgo](https://opengameart.org/content/basic-hex-tile-set-16x16) and [Basic Hex Tile Set Plus - 16x16 by pistachio](https://opengameart.org/content/basic-hex-tile-set-plus-16x16).
