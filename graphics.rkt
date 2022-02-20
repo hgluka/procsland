@@ -35,11 +35,18 @@
        (let ([s : Symbol (array-ref tile-map js)]
              [p : point (tile-pos js)])
          (cond
-           [(equal? s 'land) (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)]
-           [(equal? s 'water) (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 1 hex-height) hex-width hex-height)]
-           [(equal? s 'beach) (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 1 hex-width) (* 1 hex-height) hex-width hex-height)]
-           [(equal? s 'mountain) (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 2 hex-width) (* 0 hex-height) hex-width hex-height)]
-           [(equal? s 'forest) (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 1 hex-width) (* 0 hex-height) hex-width hex-height)])))
+           [(equal? s 'land) (begin
+                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height))]
+           [(equal? s 'water) (begin
+                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 1 hex-height) hex-width hex-height))]
+           [(equal? s 'beach) (begin
+                                (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 1 hex-width) (* 1 hex-height) hex-width hex-height))]
+           [(equal? s 'mountain) (begin
+                                   (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
+                                   (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 2 hex-width) (* 0 hex-height) hex-width hex-height))]
+           [(equal? s 'forest) (begin
+                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
+                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 1 hex-width) (* 0 hex-height) hex-width hex-height))])))
      (indexes-array (array-shape tile-map)))
     (void)))
 

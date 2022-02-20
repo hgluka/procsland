@@ -14,8 +14,8 @@
   ; command line args
   (define screen-width (make-parameter 1366))
   (define screen-height (make-parameter 768))
-  (define map-height (make-parameter 34))
-  (define map-width (make-parameter 38))
+  (define map-height (make-parameter 31))
+  (define map-width (make-parameter 42))
   (define land-mass (make-parameter 53))
   (define mountain-mass (make-parameter 35))
   (define forest-mass (make-parameter 45))
