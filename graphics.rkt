@@ -9,17 +9,17 @@
 (define hex-width 32)
 (define hex-height 32)
 (define tileset-bitmap
-  (read-bitmap "images/drjamgo_modified.png" 'png/alpha))
+  (read-bitmap "resources/images/drjamgo_modified.png" 'png/alpha))
 
-(struct point ([x : Integer] [y : Integer]))
+(struct point ([x : Integer] [y : Integer]) #:type-name Point)
 
-(: offset (-> Integer point))
+(: offset (-> Integer Point))
 (define (offset r)
   (if (zero? (remainder r 2))
       (point 0 (quotient (* hex-height 3) 4))
       (point (quotient hex-width 2) (quotient (* hex-height 3) 4))))
 
-(: tile-pos (-> (Vectorof Index) point))
+(: tile-pos (-> (Vectorof Index) Point))
 (define (tile-pos js)
   (let ([r : Integer (vector-ref js 0)]
         [c : Integer (vector-ref js 1)])
@@ -27,38 +27,26 @@
      (+ (point-x (offset r)) (* c hex-width))
      (* r (point-y (offset r))))))
 
-(: draw-map (-> (Array Symbol) (Instance Canvas%) (Instance DC<%>) Void))
+(: draw-tile (-> Tile Point (Instance DC<%>) Boolean))
+(define (draw-tile t p dc)
+  (when (tile-draw-under t)
+    (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height))
+  (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (tile-sheet-x t) hex-width) (* (tile-sheet-y t) hex-height) hex-width hex-height))
+
+(: draw-map (-> (Array Tile) (Instance Canvas%) (Instance DC<%>) Void))
 (define (draw-map tile-map canvas dc)
   (array-map
    (λ: ([js : (Vectorof Index)])
-     (let ([s : Symbol (array-ref tile-map js)]
-           [p : point (tile-pos js)])
-       (cond
-         [(equal? s 'land) (begin
-                             (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height))]
-         [(equal? s 'water) (begin
-                              (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 1 hex-height) hex-width hex-height))]
-         [(equal? s 'beach) (begin
-                              (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 3 hex-width) (* 3 hex-height) hex-width hex-height))]
-         [(equal? s 'mountain) (begin
-                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
-                                 (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 0 1) hex-width) (* (+ 1 0) hex-height) hex-width hex-height))]
-         [(equal? s 'forest) (begin
-                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
-                               (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 1 0) hex-width) (* 0 hex-height) hex-width hex-height))]
-         [(equal? s 'farm) (begin
-                             (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
-                             (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 2 hex-width) (* 3 hex-height) hex-width hex-height))]
-         [(equal? s 'city) (begin
-                             (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* 0 hex-width) (* 0 hex-height) hex-width hex-height)
-                             (send dc draw-bitmap-section tileset-bitmap (point-x p) (point-y p) (* (+ 0 0) hex-width) (* 3 hex-height) hex-width hex-height))])))
+     (let ([s : Tile (array-ref tile-map js)]
+           [p : Point (tile-pos js)])
+       (draw-tile s p dc)))
    (indexes-array (array-shape tile-map)))
   (void))
 
 (define game-canvas%
   (class canvas%
     (init-field [focus : (Mutable-Vectorof Integer)]
-                [tm : (Array Symbol)]
+                [tm : (Array Tile)]
                 [tm-width : Integer]
                 [tm-height : Integer])
     (inherit refresh)
@@ -82,6 +70,13 @@
     (define/private (game-paint-callback c dc)
                     (draw-map tm c dc)
                     (let ([inds (indexes-array (array-shape tm))])
+                      (when (equal? (tile-type (array-ref tm focus)) 'city)
+                        (send dc set-text-foreground "white")
+                        (send dc set-text-background "black")
+                        (send dc set-text-mode 'solid)
+                        (send dc draw-text (tile-name (array-ref tm focus))
+                              (+ (point-x (tile-pos (array-ref inds focus))) hex-width)
+                              (+ hex-height (point-y (tile-pos (array-ref inds focus))))))
                       (send dc draw-bitmap-section tileset-bitmap
                             (point-x (tile-pos (array-ref inds focus)))
                             (point-y (tile-pos (array-ref inds focus)))
@@ -108,7 +103,7 @@
       (new frame%
            [label "procsland"]
            [style '(no-resize-border)]))
-    (: tm (Array Symbol))
+    (: tm (Array Tile))
     (define tm (generate-map map-height map-width iterations land-mass mountain-mass forest-mass beach-mass city-mass))
 
     (: focus (Mutable-Vectorof Integer))
